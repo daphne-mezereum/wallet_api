@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from decimal import Decimal
 from .models import Wallet
+from .services import Operations
 
 
 class WalletSerializer(serializers.ModelSerializer):
@@ -11,7 +12,7 @@ class WalletSerializer(serializers.ModelSerializer):
 
 
 class WalletOperationSerializer(serializers.Serializer):
-    operation_type = serializers.ChoiceField(choices=["DEPOSIT", "WITHDRAW"])
+    operation_type = serializers.ChoiceField(choices=[Operations.deposit, Operations.withdraw])
     amount = serializers.DecimalField(
         max_digits=18,
         decimal_places=2,
