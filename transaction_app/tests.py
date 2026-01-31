@@ -55,7 +55,7 @@ class WalletOperationsTest(APITestCase):
         self.wallet.refresh_from_db()
         self.assertEqual(self.wallet.balance, Decimal("480.50"))
 
-    def test_withdraw_insufficient_funds_returns_409_and_balance_unchanged(self):
+    def test_withdraw_insufficient_funds(self):
         payload = {"operation_type": "WITHDRAW", "amount": "999.00"}
 
         resp = self.client.post(self.url, payload, format="json")
@@ -64,7 +64,7 @@ class WalletOperationsTest(APITestCase):
         self.wallet.refresh_from_db()
         self.assertEqual(self.wallet.balance, self.default_balance)
 
-    def test_wallet_not_found_returns_404(self):
+    def test_wallet_not_found(self):
         missing_uuid = uuid.uuid4()
         url = reverse("wallet_operation", kwargs={"uuid": missing_uuid})
 
@@ -73,7 +73,7 @@ class WalletOperationsTest(APITestCase):
 
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_invalid_operation_type_returns_400(self):
+    def test_invalid_operation_type(self):
         payload = {"operation_type": "RANDOM", "amount": "10.00"}
 
         resp = self.client.post(self.url, payload, format="json")
@@ -82,8 +82,26 @@ class WalletOperationsTest(APITestCase):
         self.wallet.refresh_from_db()
         self.assertEqual(self.wallet.balance, self.default_balance)
 
-    def test_invalid_amount_returns_400(self):
+    def test_invalid_amount(self):
         payload = {"operation_type": "DEPOSIT", "amount": "0.00"}  # min_value=0.01
+
+        resp = self.client.post(self.url, payload, format="json")
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+        self.wallet.refresh_from_db()
+        self.assertEqual(self.wallet.balance, self.default_balance)
+
+    def test_invalid_accuracy(self):
+        payload = {"operation_type": "DEPOSIT", "amount": "5.5625"}
+
+        resp = self.client.post(self.url, payload, format="json")
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+        self.wallet.refresh_from_db()
+        self.assertEqual(self.wallet.balance, self.default_balance)
+
+    def test_invalid_max_digits(self):
+        payload = {"operation_type": "DEPOSIT", "amount": "6548549769674967496549535494544653"}
 
         resp = self.client.post(self.url, payload, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
