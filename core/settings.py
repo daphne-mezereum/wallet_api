@@ -25,9 +25,9 @@ load_dotenv(BASE_DIR / "config.env")
 SECRET_KEY = os.getenv('SECRET_KEY', '')
 DEBUG = os.getenv('DEBUG_CONF', '')
 HOST = os.getenv("HOST", "")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "")
-DATABASE_USER = os.getenv("DATABASE_USER", "")
-DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD", "")
+POSTGRES_DB = os.getenv("POSTGRES_DB", "")
+POSTGRES_USER = os.getenv("POSTGRES_USER", "")
+POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "")
 DATABASE_HOST = os.getenv("DATABASE_HOST", "127.0.0.1")
 DATABASE_PORT = os.getenv("DATABASE_PORT", "5432")
 
@@ -83,9 +83,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': DATABASE_NAME,
-        'USER': DATABASE_USER,
-        'PASSWORD': DATABASE_PASSWORD,
+        'NAME': POSTGRES_DB,
+        'USER': POSTGRES_USER,
+        'PASSWORD': POSTGRES_PASSWORD,
         'HOST': DATABASE_HOST,
         'PORT': DATABASE_PORT,
     }
